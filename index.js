@@ -2,7 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./docs/swagger');
-const bookRoutes = require('./routes/bookRoutes'); // modificat aici
+const bookRoutes = require('./routes/bookRoutes');
+const echoRoutes = require('./routes/echoRoutes');
 
 const PORT = 3000;
 const app = express();
@@ -25,8 +26,8 @@ mongoose.connect(MONGODB_URI, {
 
 app.use(express.json());
 
-
 app.use('/books', bookRoutes);
+app.use('/echo', echoRoutes);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
