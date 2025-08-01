@@ -1,4 +1,5 @@
 const express = require('express');
+const updateBook = require('./putMethod');
 
 const PORT = 3000;
 const app = express();
@@ -53,6 +54,8 @@ app.post('/books', (req, res) => {
     
     res.status(201).json(book);
 });
+
+app.put('/books/:id', updateBook(books, validateBookInput));
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
