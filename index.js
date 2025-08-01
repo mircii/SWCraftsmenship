@@ -1,5 +1,8 @@
 const express = require('express');
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./docs/swagger');
+
 const PORT = 3000;
 const app = express();
 
@@ -27,10 +30,28 @@ const createBook = (title, author) => {
     };
 };
 
+/**
+ * @openapi
+ * /books:
+ *   get:
+ *     summary: Get all books
+ *     responses:
+ *       200:
+ *         description: List of books
+ */
 app.get('/books', (req, res) => {
     res.json(books);
 });
 
+/**
+ * @openapi
+ * /books/id:
+ *   get:
+ *     summary: Get book by id
+ *     responses:
+ *       200:
+ *         description: Book details
+ */
 app.get('/books/:id', (req, res) => {
     const book = findBookById(req.params.id);
     
@@ -40,6 +61,20 @@ app.get('/books/:id', (req, res) => {
         res.status(404).json({ error: 'Book not found' });
     }
 });
+
+/**
+ * @openapi
+ * /books:
+ *   post:
+ *     summary: Create a new book
+ *     requestBody:
+ *       required: true
+ *     responses:
+ *       201:
+ *         description: Book created
+ *       400:
+ *         description: Missing fields
+ */
 
 app.post('/books', (req, res) => {
     const { title, author } = req.body;
@@ -54,6 +89,9 @@ app.post('/books', (req, res) => {
     res.status(201).json(book);
 });
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
+  console.log(`Swagger docs: http://localhost:${PORT}/api-docs`);
 });
