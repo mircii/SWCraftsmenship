@@ -15,24 +15,29 @@ app.use(express.json());
 const books = [];
 
 const findBookById = (id) => {
-    return books.find(book => book.id == id);
+  console.log(`Searching for book with ID: ${id}`);
+  return books.find(book => book.id == id);
 };
 
 const generateBookId = () => {
-    return Math.floor(Math.random() * 10000);
+  const id = Math.floor(Math.random() * 10000);
+  console.log(`Generated book ID: ${id}`);
+  return id;
 };
 
 const validateBookInput = (title, author) => {
-    return (
-        typeof title === 'string' &&
-        typeof author === 'string' &&
-        title.trim().length > 0 &&
-        author.trim().length > 0
-    );
+  console.log(`Validating book input: title="${title}", author="${author}"`);
+  return (
+    typeof title === 'string' &&
+    typeof author === 'string' &&
+    title.trim().length > 0 &&
+    author.trim().length > 0
+  );
 };
 
 
 const createBook = (title, author) => {
+    console.log(`Creating book with title="${title}" and author="${author}"`);
     return {
         id: generateBookId(),
         title: title,
@@ -41,7 +46,8 @@ const createBook = (title, author) => {
 };
 
 const getBooksFromDB = () => {
-  throw new Error('No database connection available');
+    console.log('Simulating DB call...');
+    throw new Error('No database connection available');
 };
 
 /**
@@ -54,12 +60,13 @@ const getBooksFromDB = () => {
  *         description: List of books
  */
 app.get('/books', (req, res) => {
-  try {
-    res.json(books);
-  } catch (error) {
+    console.log('GET /books called');
+    try {
+        res.json(books);
+    } catch (error) {
     console.error('Unexpected error in GET /books:', error.message);
     res.status(500).json({ error: 'Internal server error' });
-  }
+    }
 });
 
 /**
@@ -81,11 +88,19 @@ app.get('/books', (req, res) => {
  *         description: Book not found
  */
 app.get('/books/:id', (req, res) => {
-    const book = findBookById(req.params.id);
-    if (book) {
+    console.log(`GET /books/${req.params.id} called`);
+    try {
+        const book = findBookById(req.params.id);
+        if (book) {
+        console.log(`Book found:`, book);
         res.json(book);
-    } else {
+        } else {
+        console.warn('Book not found');
         res.status(404).json({ error: 'Book not found' });
+        }
+    } catch (error) {
+        console.error('Unexpected error in GET /books/:id:', error.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -129,15 +144,17 @@ app.post('/books',
             .notEmpty().withMessage('Author cannot be empty'),
     ],
     (req, res) => {
+        console.log('POST /books called with body:', req.body);
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            
+            console.warn('Validation errors:', errors.array());
             return res.status(400).json({ errors: errors.array() });
         }
 
         const { title, author } = req.body;
         const book = createBook(title, author);
         books.push(book);
+        console.log('Book successfully created:', book);
 
         res.status(201).json(book);
     }
@@ -156,6 +173,7 @@ app.post('/books',
  */
 app.get('/books-from-db', (req, res) => {
   try {
+    console.log('GET /books-from-db called');
     const booksFromDB = getBooksFromDB(); 
     res.json(booksFromDB);
   } catch (error) {
