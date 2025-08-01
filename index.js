@@ -21,7 +21,7 @@ const findBookById = (id) => {
 const generateBookId = () => {
     return Math.floor(Math.random() * 10000);
 };
-/*
+
 const validateBookInput = (title, author) => {
     return (
         typeof title === 'string' &&
@@ -29,7 +29,7 @@ const validateBookInput = (title, author) => {
         title.trim().length > 0 &&
         author.trim().length > 0
     );
-};*/
+};
 
 
 const createBook = (title, author) => {
@@ -54,7 +54,12 @@ const getBooksFromDB = () => {
  *         description: List of books
  */
 app.get('/books', (req, res) => {
+  try {
     res.json(books);
+  } catch (error) {
+    console.error('Unexpected error in GET /books:', error.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 /**
@@ -77,7 +82,6 @@ app.get('/books', (req, res) => {
  */
 app.get('/books/:id', (req, res) => {
     const book = findBookById(req.params.id);
-    
     if (book) {
         res.json(book);
     } else {
