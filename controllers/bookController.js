@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
 const Book = require('../models/Book');
+const xss = require('xss');
 
 // GET all books
 const getAllBooks = async (req, res) => {
@@ -36,10 +37,10 @@ const createBook = async (req, res) => {
   }
   
   try {
-    const { title, author } = req.body;
+    const title = xss(req.body.title);
+    const author = xss(req.body.author);
     console.log(`Attempting to create book: title="${title}", author="${author}"`);
     
-    // Verifică dacă există deja o carte cu același title și author
     const existingBook = await Book.findOne({ title, author });
     if (existingBook) {
       console.log('Book already exists:', existingBook);
@@ -67,7 +68,8 @@ const updateBook = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
   try {
-    const { title, author } = req.body;
+    const title = xss(req.body.title);
+    const author = xss(req.body.author);
     const book = await Book.findByIdAndUpdate(
       req.params.id,
       { title, author },
