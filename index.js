@@ -20,7 +20,7 @@ const findBookById = (id) => {
 const generateBookId = () => {
     return Math.floor(Math.random() * 10000);
 };
-
+/*
 const validateBookInput = (title, author) => {
     return (
         typeof title === 'string' &&
@@ -28,7 +28,7 @@ const validateBookInput = (title, author) => {
         title.trim().length > 0 &&
         author.trim().length > 0
     );
-};
+};*/
 
 
 const createBook = (title, author) => {
