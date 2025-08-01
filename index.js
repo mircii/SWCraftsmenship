@@ -1,4 +1,5 @@
 const express = require('express');
+const updateBook = require('./putMethod');
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./docs/swagger');
@@ -132,6 +133,17 @@ app.get('/books-from-db', (req, res) => {
     console.log('Error fetching books from DB:', error.message);
     res.status(503).json([{ id: 0, title: "Default", author: "Default" }]);
   }
+});
+
+app.put('/books/:id', updateBook(books, validateBookInput));
+
+app.head('/books/:id', (req, res) => {
+    const book = findBookById(req.params.id);
+    if(book){
+        res.sendStatus(200);
+    }else{
+        res.sendStatus(404);
+    }
 });
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
