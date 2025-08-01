@@ -1,5 +1,7 @@
 const express = require('express');
 
+const { body, validationResult } = require('express-validator');
+
 // Configuration
 const PORT = 3000;
 const app = express();
@@ -52,18 +54,35 @@ app.get('/books/:id', (req, res) => {
     }
 });
 
-app.post('/books', (req, res) => {
-    const { title, author } = req.body;
-    
-    if (!validateBookInput(title, author)) {
-        return res.status(400).json({ error: 'Missing required fields: title and author' });
+
+app.post('/books', 
+  
+    [
+        body('title')
+            .exists({ checkNull: true }).withMessage('Title is required')
+            .isString().withMessage('Title must be a string')
+            .trim()
+            .notEmpty().withMessage('Title cannot be empty'),
+        body('author')
+            .exists({ checkNull: true }).withMessage('Author is required')
+            .isString().withMessage('Author must be a string')
+            .trim()
+            .notEmpty().withMessage('Author cannot be empty'),
+    ],
+    (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { title, author } = req.body;
+        const book = createBook(title, author);
+        books.push(book);
+
+        res.status(201).json(book);
     }
-    
-    const book = createBook(title, author);
-    books.push(book);
-    
-    res.status(201).json(book);
-});
+);
 
 // Start server
 app.listen(PORT, () => {
