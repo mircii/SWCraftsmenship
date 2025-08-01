@@ -1,16 +1,12 @@
 const express = require('express');
 
-// Configuration
 const PORT = 3000;
 const app = express();
 
-// Middleware
 app.use(express.json());
 
-// Data storage
 const books = [];
 
-// Helper functions
 const findBookById = (id) => {
     return books.find(book => book.id == id);
 };
@@ -31,7 +27,6 @@ const createBook = (title, author) => {
     };
 };
 
-// Routes
 app.get('/books', (req, res) => {
     res.json(books);
 });
