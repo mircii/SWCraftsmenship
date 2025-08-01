@@ -135,8 +135,99 @@ app.get('/books-from-db', (req, res) => {
   }
 });
 
+/**
+ * @openapi
+ * /books/{id}:
+ *   put:
+ *     summary: Update an existing book
+ *     description: Updates a book with the specified ID. All fields are required and will replace the existing book data.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the book to update
+ *         example: "1234"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - author
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: The updated title of the book
+ *                 example: "The Great Gatsby - Revised Edition"
+ *               author:
+ *                 type: string
+ *                 description: The updated author of the book
+ *                 example: "F. Scott Fitzgerald"
+ *     responses:
+ *       200:
+ *         description: Book successfully updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: The book ID
+ *                   example: 1234
+ *                 title:
+ *                   type: string
+ *                   description: The updated book title
+ *                   example: "The Great Gatsby - Revised Edition"
+ *                 author:
+ *                   type: string
+ *                   description: The updated book author
+ *                   example: "F. Scott Fitzgerald"
+ *       400:
+ *         description: Bad request - Missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Missing required fields: title and author"
+ *       404:
+ *         description: Book not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Book not found"
+ */
 app.put('/books/:id', updateBook(books, validateBookInput));
 
+/**
+ * @openapi
+ * /books/{id}:
+ *   head:
+ *     summary: Check if book exists by id
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the book to check
+ *     responses:
+ *       200:
+ *         description: Book exists
+ *       404:
+ *         description: Book not found
+ */
 app.head('/books/:id', (req, res) => {
     const book = findBookById(req.params.id);
     if(book){
