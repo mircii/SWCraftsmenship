@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./docs/swagger');
@@ -10,7 +11,10 @@ const mongoose = require('mongoose');
 
 const Book = require('./models/Book');
 
-mongoose.connect('mongodb://localhost:27017/booksdb', {
+// MongoDB Atlas connection string
+const MONGODB_URI = process.env.ConnectionString;
+
+mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => {
