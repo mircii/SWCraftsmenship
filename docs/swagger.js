@@ -8,7 +8,7 @@ const options = {
       version: '1.0.0',
     },
   },
-  apis: ['./index.js'],
+  apis: ['./routes/*.js'], // Path to the API docs
 };
 
 module.exports = swaggerJsdoc(options);
