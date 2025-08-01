@@ -5,20 +5,19 @@ const Book = require('../models/Book');
 const getAllBooks = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 2;
     
     if (page < 1 || limit < 1) {
       return res.status(400).json({ error: 'Page and limit must be positive numbers' });
     }
     
     const skip = (page - 1) * limit;
-    
     const totalBooks = await Book.countDocuments();
     
     const books = await Book.find()
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: 1 });
     
     const totalPages = Math.ceil(totalBooks / limit);
     const hasNextPage = page < totalPages;
