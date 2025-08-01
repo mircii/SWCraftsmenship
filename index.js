@@ -1,7 +1,7 @@
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./docs/swagger');
-const createBookRoutes = require('./routes/bookRoutes');
+const bookRoutes = require('./routes/bookRoutes'); // modificat aici
 
 const PORT = 3000;
 const app = express();
@@ -21,9 +21,8 @@ mongoose.connect('mongodb://localhost:27017/booksdb', {
 
 app.use(express.json());
 
-const books = [];
 
-app.use('/books', createBookRoutes(books));
+app.use('/books', bookRoutes);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
