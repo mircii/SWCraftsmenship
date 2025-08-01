@@ -4,6 +4,9 @@ const updateBook = require('./putMethod');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./docs/swagger');
 
+const { body, validationResult } = require('express-validator');
+
+// Configuration
 const PORT = 3000;
 const app = express();
 
@@ -18,10 +21,16 @@ const findBookById = (id) => {
 const generateBookId = () => {
     return Math.floor(Math.random() * 10000);
 };
-
+/*
 const validateBookInput = (title, author) => {
-    return title && author;
-};
+    return (
+        typeof title === 'string' &&
+        typeof author === 'string' &&
+        title.trim().length > 0 &&
+        author.trim().length > 0
+    );
+};*/
+
 
 const createBook = (title, author) => {
     return {
@@ -101,18 +110,34 @@ app.get('/books/:id', (req, res) => {
  *       400:
  *         description: Missing fields
  */
-app.post('/books', (req, res) => {
-  const { title, author } = req.body;
+app.post('/books', 
   
-  if (!validateBookInput(title, author)) {
-    return res.status(400).json({ error: 'Missing required fields: title and author' });
-  }
-  
-  const book = createBook(title, author);
-  books.push(book);
-  
-  res.status(201).json(book);
-});
+    [
+        body('title')
+            .exists({ checkNull: true }).withMessage('Title is required')
+            .isString().withMessage('Title must be a string')
+            .trim()
+            .notEmpty().withMessage('Title cannot be empty'),
+        body('author')
+            .exists({ checkNull: true }).withMessage('Author is required')
+            .isString().withMessage('Author must be a string')
+            .trim()
+            .notEmpty().withMessage('Author cannot be empty'),
+    ],
+    (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { title, author } = req.body;
+        const book = createBook(title, author);
+        books.push(book);
+
+        res.status(201).json(book);
+    }
+);
 
 /**
  * @openapi
