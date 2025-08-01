@@ -25,7 +25,6 @@ const getBookById = async (req, res) => {
   }
 };
 
-// POST create book
 const createBook = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -33,7 +32,14 @@ const createBook = async (req, res) => {
   }
   try {
     const { title, author } = req.body;
-    const book = new Book({ title, author });
+  
+    let randomId, exists;
+    do {
+      randomId = Math.floor(Math.random() * 1000000) + 1;
+      exists = await Book.findOne({ id: randomId });
+    } while (exists);
+
+    const book = new Book({ title, author, id: randomId });
     await book.save();
     res.status(201).json(book);
   } catch (error) {
