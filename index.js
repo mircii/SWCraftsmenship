@@ -187,6 +187,24 @@ app.post('/books', (req, res) => {
  */
 app.put('/books/:id', updateBook(books, validateBookInput));
 
+/**
+ * @openapi
+ * /books/{id}:
+ *   head:
+ *     summary: Check if book exists by id
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the book to check
+ *     responses:
+ *       200:
+ *         description: Book exists
+ *       404:
+ *         description: Book not found
+ */
 app.head('/books/:id', (req, res) => {
     const book = findBookById(req.params.id);
     if(book){
