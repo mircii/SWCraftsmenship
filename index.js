@@ -31,6 +31,10 @@ const createBook = (title, author) => {
     };
 };
 
+const getBooksFromDB = () => {
+  throw new Error('No database connection available');
+};
+
 /**
  * @openapi
  * /books:
@@ -89,10 +93,8 @@ app.get('/books/:id', (req, res) => {
  *             properties:
  *               title:
  *                 type: string
- *                 example: "The Great Gatsby"
  *               author:
- *                 type: string
- *                 example: "F. Scott Fitzgerald"
+ *                 type: string 
  *     responses:
  *       201:
  *         description: Book created
@@ -110,6 +112,27 @@ app.post('/books', (req, res) => {
   books.push(book);
   
   res.status(201).json(book);
+});
+
+/**
+ * @openapi
+ * /books-from-db:
+ *   get:
+ *     summary: Get books from DB with error handling
+ *     responses:
+ *       200:
+ *         description: List of books or fallback on error
+ *       400:
+ *         description: Database Unavailable
+ */
+app.get('/books-from-db', (req, res) => {
+  try {
+    const booksFromDB = getBooksFromDB(); 
+    res.json(booksFromDB);
+  } catch (error) {
+    console.log('Error fetching books from DB:', error.message);
+    res.status(503).json([{ id: 0, title: "Default", author: "Default" }]);
+  }
 });
 
 /**
