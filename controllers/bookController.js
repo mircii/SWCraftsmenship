@@ -26,24 +26,37 @@ const getBookById = async (req, res) => {
 };
 
 const createBook = async (req, res) => {
+  console.log('=== CREATE BOOK REQUEST ===');
+  console.log('Request body:', req.body);
+  
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log('Validation errors:', errors.array());
     return res.status(400).json({ errors: errors.array() });
   }
+  
   try {
     const { title, author } = req.body;
-  
-    let randomId, exists;
-    do {
-      randomId = Math.floor(Math.random() * 1000000) + 1;
-      exists = await Book.findOne({ id: randomId });
-    } while (exists);
-
-    const book = new Book({ title, author, id: randomId });
+    console.log(`Attempting to create book: title="${title}", author="${author}"`);
+    
+    // Verifică dacă există deja o carte cu același title și author
+    const existingBook = await Book.findOne({ title, author });
+    if (existingBook) {
+      console.log('Book already exists:', existingBook);
+      return res.status(409).json({ error: 'Book with same title and author already exists' });
+    }
+    
+    const book = new Book({ title, author });
+    console.log('Book object created, attempting to save...');
+    
     await book.save();
+    console.log('Book saved successfully:', book);
+    
     res.status(201).json(book);
   } catch (error) {
-    res.status(400).json({ error: 'Invalid data' });
+    console.error('Error creating book:', error);
+    console.error('Error details:', error.message);
+    res.status(400).json({ error: 'Invalid data', details: error.message });
   }
 };
 
