@@ -36,7 +36,6 @@ const getBooksFromDB = () => {
     throw new Error('No database connection available');
 };
 
-
 // Controller functions
 const createBookController = (books) => {
     return {
