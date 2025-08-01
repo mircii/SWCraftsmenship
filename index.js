@@ -20,8 +20,14 @@ const generateBookId = () => {
 };
 
 const validateBookInput = (title, author) => {
-    return title && author;
+    return (
+        typeof title === 'string' &&
+        typeof author === 'string' &&
+        title.trim().length > 0 &&
+        author.trim().length > 0
+    );
 };
+
 
 const createBook = (title, author) => {
     return {
