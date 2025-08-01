@@ -54,16 +54,6 @@ app.post('/books', (req, res) => {
     res.status(201).json(book);
 });
 
-app.head('/books/:id', (req, res) => {
-    const book = findBookById(req.params.id);
-    if(book){
-        res.sendStatus(200);
-    }else{
-        res.sendStatus(404);
-    }
-});
-
-// Start server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
