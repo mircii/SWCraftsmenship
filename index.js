@@ -45,12 +45,21 @@ app.get('/books', (req, res) => {
 
 /**
  * @openapi
- * /books/id:
+ * /books/{id}:
  *   get:
  *     summary: Get book by id
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the book to retrieve
  *     responses:
  *       200:
  *         description: Book details
+ *       404:
+ *         description: Book not found
  */
 app.get('/books/:id', (req, res) => {
     const book = findBookById(req.params.id);
@@ -69,24 +78,37 @@ app.get('/books/:id', (req, res) => {
  *     summary: Create a new book
  *     requestBody:
  *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - author
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "The Great Gatsby"
+ *               author:
+ *                 type: string
+ *                 example: "F. Scott Fitzgerald"
  *     responses:
  *       201:
  *         description: Book created
  *       400:
  *         description: Missing fields
  */
-
 app.post('/books', (req, res) => {
-    const { title, author } = req.body;
-    
-    if (!validateBookInput(title, author)) {
-        return res.status(400).json({ error: 'Missing required fields: title and author' });
-    }
-    
-    const book = createBook(title, author);
-    books.push(book);
-    
-    res.status(201).json(book);
+  const { title, author } = req.body;
+  
+  if (!validateBookInput(title, author)) {
+    return res.status(400).json({ error: 'Missing required fields: title and author' });
+  }
+  
+  const book = createBook(title, author);
+  books.push(book);
+  
+  res.status(201).json(book);
 });
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
