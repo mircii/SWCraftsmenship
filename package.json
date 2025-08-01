@@ -14,10 +14,9 @@
     "mongoose": "^8.17.0",
     "swagger-jsdoc": "^6.2.8",
     "jest": "^30.0.5",
-    "supertest": "^7.1.4"
+    "supertest": "^7.1.4",
     "swagger-ui-express": "^5.0.1",
     "xss": "^1.0.15"
 
-  },
-
+  }
 }
