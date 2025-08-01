@@ -62,9 +62,9 @@ app.post('/books', (req, res) => {
 app.head('/books/:id', (req, res) => {
     const book = findBookById(req.params.id);
     if(book){
-        res.status(200).json("Book exists");
+        res.sendStatus(200);
     }else{
-        res.status(404).json({ error: 'Book not found' });
+        res.sendStatus(404);
     }
 });
 
